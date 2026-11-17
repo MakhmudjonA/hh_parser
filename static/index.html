@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="uz" class="dark">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -68,7 +68,7 @@
             <h1 class="font-bold text-lg tracking-tight text-white">HH Parser Pro</h1>
             <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">v2.4 Docker Ready</span>
           </div>
-          <p class="text-xs text-zinc-400">HeadHunter vakansiyalarini tahlil qilish va eksport qilish tizimi</p>
+          <p class="text-xs text-zinc-400">HeadHunter Vacancy Analytics & Intelligence Platform</p>
         </div>
       </div>
 
@@ -80,10 +80,10 @@
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
           </span>
-          <span id="statusText">Tizim tayyor</span>
+          <span id="statusText">System Ready</span>
         </div>
 
-        <button onclick="switchTab('settingsTab')" class="p-2 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.06] text-zinc-400 hover:text-white transition" title="Sozlamalar va hisob">
+        <button onclick="switchTab('settingsTab')" class="p-2 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.06] text-zinc-400 hover:text-white transition" title="Settings & Account">
           <i data-lucide="settings" class="w-4 h-4"></i>
         </button>
       </div>
@@ -93,9 +93,9 @@
     <section class="mb-8">
       <div class="relative rounded-2xl border border-white/10 bg-zinc-900/40 p-6 backdrop-blur-xl shadow-2xl">
         <div class="max-w-3xl mb-5">
-          <span class="text-[11px] font-semibold uppercase tracking-wider text-indigo-400">Tezkor Ma'lumot Qidiruvi</span>
-          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white mt-1">Qaysi sohada vakansiya qidiryapsiz?</h2>
-          <p class="text-sm text-zinc-400 mt-1">hh.uz platformasidagi barcha yangi vakansiyalarni filtrlash, tahlil qilish va bir zumda CSV/Excel ga yuklab olish.</p>
+          <span class="text-[11px] font-semibold uppercase tracking-wider text-indigo-400">Fast Vacancy Search</span>
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white mt-1">Find vacancies on HeadHunter in seconds</h2>
+          <p class="text-sm text-zinc-400 mt-1">Search, filter, analyze, and instantly export job vacancies from hh.uz to Excel, CSV, or JSON.</p>
         </div>
 
         <!-- Search Form -->
@@ -107,7 +107,7 @@
                 type="text" 
                 id="searchQuery" 
                 required
-                placeholder="Kasb yoki texnologiya (masalan: Python, Flutter, Frontend, DevOps...)" 
+                placeholder="Job title, role, or technology (e.g. Python, Flutter, Frontend, DevOps...)" 
                 class="w-full pl-12 pr-4 py-3.5 bg-black/40 border border-white/10 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition"
                 value="Python"
               />
@@ -118,13 +118,13 @@
               class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm transition shadow-lg shadow-indigo-600/30 active:scale-[0.98]"
             >
               <i data-lucide="sparkles" class="w-4 h-4"></i>
-              <span id="searchBtnText">Vakansiyalarni yig'ish</span>
+              <span id="searchBtnText">Scrape Vacancies</span>
             </button>
           </div>
 
           <!-- Quick Presets -->
           <div class="flex items-center gap-2 flex-wrap text-xs text-zinc-400 pt-1">
-            <span class="text-zinc-500">Ommabop:</span>
+            <span class="text-zinc-500">Popular:</span>
             <button type="button" onclick="setPreset('Python')" class="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/5 hover:border-white/15 transition">Python</button>
             <button type="button" onclick="setPreset('Flutter')" class="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/5 hover:border-white/15 transition">Flutter</button>
             <button type="button" onclick="setPreset('React')" class="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/5 hover:border-white/15 transition">React / Frontend</button>
@@ -142,55 +142,55 @@
               class="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-400 hover:text-indigo-400 transition"
             >
               <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i>
-              <span>Kengaytirilgan filtrlar</span>
+              <span>Advanced Filters</span>
               <i data-lucide="chevron-down" id="filterChevron" class="w-3.5 h-3.5 transition-transform duration-200"></i>
             </button>
 
             <!-- Detailed scraping toggle -->
             <label class="flex items-center gap-2 cursor-pointer text-xs text-zinc-300">
               <input type="checkbox" id="fetchDetails" class="rounded border-zinc-700 text-indigo-600 focus:ring-indigo-500 bg-zinc-900" />
-              <span>Har bir vakansiyaning batafsil ma'lumotlarini (skills, kontaktlar) yuklash</span>
+              <span>Fetch detailed vacancy data (skills, description, contacts)</span>
             </label>
           </div>
 
           <!-- Advanced Filters Box -->
           <div id="advancedFilters" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-3">
             <div>
-              <label class="block text-xs font-medium text-zinc-400 mb-1.5">Hudud / Shahar</label>
+              <label class="block text-xs font-medium text-zinc-400 mb-1.5">Region / City</label>
               <select id="filterArea" class="w-full bg-zinc-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                <option value="2759">Toshkent</option>
-                <option value="97">Butun O'zbekiston</option>
-                <option value="2760">Samarqand</option>
-                <option value="160">Olmaota (Qozog'iston)</option>
-                <option value="1">Moskva (Rossiya)</option>
+                <option value="2759">Tashkent</option>
+                <option value="97">All Uzbekistan</option>
+                <option value="2760">Samarkand</option>
+                <option value="160">Almaty (Kazakhstan)</option>
+                <option value="1">Moscow (Russia)</option>
               </select>
             </div>
 
             <div>
-              <label class="block text-xs font-medium text-zinc-400 mb-1.5">Talab etiladigan tajriba</label>
+              <label class="block text-xs font-medium text-zinc-400 mb-1.5">Experience Required</label>
               <select id="filterExperience" class="w-full bg-zinc-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                <option value="all">Barchasi</option>
-                <option value="noExperience">Tajribasiz (Intern / Junior)</option>
-                <option value="between1And3">1 yildan 3 yilgacha</option>
-                <option value="between3And6">3 yildan 6 yilgacha</option>
-                <option value="moreThan6">6 yildan ortiq</option>
+                <option value="all">All Levels</option>
+                <option value="noExperience">No Experience (Junior / Intern)</option>
+                <option value="between1And3">1 to 3 years</option>
+                <option value="between3And6">3 to 6 years</option>
+                <option value="moreThan6">More than 6 years</option>
               </select>
             </div>
 
             <div>
-              <label class="block text-xs font-medium text-zinc-400 mb-1.5">Ish jadvali / Formati</label>
+              <label class="block text-xs font-medium text-zinc-400 mb-1.5">Work Schedule / Format</label>
               <select id="filterSchedule" class="w-full bg-zinc-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                <option value="all">Barchasi</option>
-                <option value="fullDay">To'liq kun</option>
-                <option value="remote">Masofaviy (Remote / Удалённо)</option>
-                <option value="flexible">Moslashuvchan grafik</option>
-                <option value="shift">Smena asosida</option>
+                <option value="all">All Formats</option>
+                <option value="fullDay">Full-time (Full Day)</option>
+                <option value="remote">Remote (Work from Home)</option>
+                <option value="flexible">Flexible Schedule</option>
+                <option value="shift">Shift Work</option>
               </select>
             </div>
 
             <div>
               <label class="block text-xs font-medium text-zinc-400 mb-1.5">
-                Yuklanadigan sahifalar: <span id="pagesDisplay" class="text-indigo-400 font-semibold">2 ta (~40 vakansiya)</span>
+                Pages to Scrape: <span id="pagesDisplay" class="text-indigo-400 font-semibold">2 pages (~40 vacancies)</span>
               </label>
               <input 
                 type="range" 
@@ -198,7 +198,7 @@
                 min="1" 
                 max="5" 
                 value="2" 
-                oninput="document.getElementById('pagesDisplay').innerText = this.value + ' ta (~' + (this.value*20) + ' vakansiya)'"
+                oninput="document.getElementById('pagesDisplay').innerText = this.value + ' pages (~' + (this.value*20) + ' vacancies)'"
                 class="w-full accent-indigo-500 cursor-pointer"
               />
             </div>
@@ -208,7 +208,7 @@
         <!-- Live Progress Indicator -->
         <div id="progressContainer" class="hidden mt-6 pt-4 border-t border-white/10">
           <div class="flex items-center justify-between text-xs mb-2">
-            <span id="progressMessage" class="text-zinc-300 font-medium">Yuklanmoqda...</span>
+            <span id="progressMessage" class="text-zinc-300 font-medium">Scraping in progress...</span>
             <span id="progressPercent" class="text-indigo-400 font-mono">0%</span>
           </div>
           <div class="w-full bg-white/5 rounded-full h-2 overflow-hidden">
@@ -223,18 +223,18 @@
       <div class="flex items-center gap-1 sm:gap-2">
         <button onclick="switchTab('resultsTab')" id="tabBtn-resultsTab" class="px-4 py-2 text-xs font-semibold rounded-lg bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 transition flex items-center gap-2">
           <i data-lucide="list" class="w-4 h-4"></i>
-          <span>Vakansiyalar Ro'yxati</span>
+          <span>Vacancy List</span>
           <span id="badgeCount" class="ml-1 px-1.5 py-0.2 rounded bg-indigo-500/20 text-[10px] text-indigo-300">0</span>
         </button>
 
         <button onclick="switchTab('analyticsTab')" id="tabBtn-analyticsTab" class="px-4 py-2 text-xs font-medium rounded-lg text-zinc-400 hover:text-white hover:bg-white/[0.04] transition flex items-center gap-2">
           <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
-          <span>Statistika & Tahlil</span>
+          <span>Analytics & Insights</span>
         </button>
 
         <button onclick="switchTab('settingsTab')" id="tabBtn-settingsTab" class="px-4 py-2 text-xs font-medium rounded-lg text-zinc-400 hover:text-white hover:bg-white/[0.04] transition flex items-center gap-2">
           <i data-lucide="shield-check" class="w-4 h-4"></i>
-          <span>HH.uz Hisob & Captcha</span>
+          <span>HH.uz Account & Captcha</span>
         </button>
       </div>
 
@@ -261,38 +261,38 @@
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div class="rounded-xl border border-white/10 bg-zinc-900/40 p-4 backdrop-blur-md">
           <div class="flex items-center justify-between text-zinc-400 mb-1">
-            <span class="text-xs uppercase tracking-wider">Jami Topildi</span>
+            <span class="text-xs uppercase tracking-wider">Total Found</span>
             <i data-lucide="briefcase" class="w-4 h-4 text-indigo-400"></i>
           </div>
           <div class="text-2xl font-bold tracking-tight text-white" id="statTotal">0</div>
-          <div class="text-[11px] text-zinc-500 mt-1">hh.uz qidiruv natijalari</div>
+          <div class="text-[11px] text-zinc-500 mt-1">Search results from hh.uz</div>
         </div>
 
         <div class="rounded-xl border border-white/10 bg-zinc-900/40 p-4 backdrop-blur-md">
           <div class="flex items-center justify-between text-zinc-400 mb-1">
-            <span class="text-xs uppercase tracking-wider">Maosh Belgilangan</span>
+            <span class="text-xs uppercase tracking-wider">Salary Stated</span>
             <i data-lucide="banknote" class="w-4 h-4 text-emerald-400"></i>
           </div>
           <div class="text-2xl font-bold tracking-tight text-emerald-400" id="statSalaryCount">0</div>
-          <div class="text-[11px] text-zinc-500 mt-1">Ochiq oylik ko'rsatilgan</div>
+          <div class="text-[11px] text-zinc-500 mt-1">Disclosed compensation</div>
         </div>
 
         <div class="rounded-xl border border-white/10 bg-zinc-900/40 p-4 backdrop-blur-md">
           <div class="flex items-center justify-between text-zinc-400 mb-1">
-            <span class="text-xs uppercase tracking-wider">Masofaviy (Remote)</span>
+            <span class="text-xs uppercase tracking-wider">Remote Positions</span>
             <i data-lucide="globe" class="w-4 h-4 text-sky-400"></i>
           </div>
           <div class="text-2xl font-bold tracking-tight text-sky-400" id="statRemoteCount">0</div>
-          <div class="text-[11px] text-zinc-500 mt-1" id="statRemotePercent">0% barcha vakansiyalardan</div>
+          <div class="text-[11px] text-zinc-500 mt-1" id="statRemotePercent">0% of all vacancies</div>
         </div>
 
         <div class="rounded-xl border border-white/10 bg-zinc-900/40 p-4 backdrop-blur-md">
           <div class="flex items-center justify-between text-zinc-400 mb-1">
-            <span class="text-xs uppercase tracking-wider">O'rtacha Maosh</span>
+            <span class="text-xs uppercase tracking-wider">Average Salary</span>
             <i data-lucide="trending-up" class="w-4 h-4 text-amber-400"></i>
           </div>
           <div class="text-2xl font-bold tracking-tight text-amber-400" id="statAvgSalary">-</div>
-          <div class="text-[11px] text-zinc-500 mt-1">Ko'rsatilgan maoshlar o'rtachasi</div>
+          <div class="text-[11px] text-zinc-500 mt-1">Average of disclosed salaries</div>
         </div>
       </div>
 
@@ -304,17 +304,17 @@
             type="text" 
             id="tableFilter" 
             oninput="renderVacancies()" 
-            placeholder="Natijalar ichidan qidirish (kompaniya, lavozim)..." 
+            placeholder="Filter results by company, title, location..." 
             class="w-full pl-9 pr-3 py-2 bg-zinc-900/60 border border-white/10 rounded-lg text-xs text-white placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           />
         </div>
 
         <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
           <select id="sortSelect" onchange="renderVacancies()" class="bg-zinc-900 border border-white/10 rounded-lg px-3 py-2 text-xs text-zinc-300 focus:outline-none">
-            <option value="default">Saralash: Standart</option>
-            <option value="salary_high">Oylik maosh: Yuqoridan pastga</option>
-            <option value="salary_low">Oylik maosh: Pastdan yuqoriga</option>
-            <option value="title_asc">Lavozim: A - Z</option>
+            <option value="default">Sort: Default</option>
+            <option value="salary_high">Salary: High to Low</option>
+            <option value="salary_low">Salary: Low to High</option>
+            <option value="title_asc">Job Title: A - Z</option>
           </select>
         </div>
       </div>
@@ -325,20 +325,20 @@
           <table class="w-full text-left border-collapse text-xs">
             <thead>
               <tr class="border-b border-white/10 bg-white/[0.02] text-zinc-400 uppercase tracking-wider font-semibold">
-                <th class="py-3 px-4">Lavozim / Vakansiya</th>
-                <th class="py-3 px-4">Kompaniya</th>
-                <th class="py-3 px-4">Oylik Maosh</th>
-                <th class="py-3 px-4">Talab qilinadigan tajriba</th>
-                <th class="py-3 px-4">Joylashuv</th>
-                <th class="py-3 px-4 text-right">Amallar</th>
+                <th class="py-3 px-4">Job Title / Role</th>
+                <th class="py-3 px-4">Company</th>
+                <th class="py-3 px-4">Salary</th>
+                <th class="py-3 px-4">Experience Required</th>
+                <th class="py-3 px-4">Location</th>
+                <th class="py-3 px-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody id="vacanciesTbody" class="divide-y divide-white/5 text-zinc-300">
               <tr>
                 <td colspan="6" class="py-12 text-center text-zinc-500">
                   <i data-lucide="inbox" class="w-10 h-10 mx-auto mb-3 opacity-40"></i>
-                  <p class="text-sm">Hali vakansiyalar yuklanmadi.</p>
-                  <p class="text-xs text-zinc-600 mt-1">Yuqoridagi qidiruv panelidan kasb nomini yozib, qidirishni bosing.</p>
+                  <p class="text-sm">No vacancies loaded yet.</p>
+                  <p class="text-xs text-zinc-600 mt-1">Enter a job title in the search box above and click Scrape Vacancies.</p>
                 </td>
               </tr>
             </tbody>
@@ -354,7 +354,7 @@
         <div class="rounded-2xl border border-white/10 bg-zinc-900/40 p-6 backdrop-blur-xl">
           <h3 class="text-sm font-semibold text-white tracking-tight mb-4 flex items-center gap-2">
             <i data-lucide="pie-chart" class="w-4 h-4 text-indigo-400"></i>
-            Tajriba talabi bo'yicha taqsimot
+            Experience Level Distribution
           </h3>
           <div class="relative h-64 flex items-center justify-center">
             <canvas id="experienceChart"></canvas>
@@ -365,7 +365,7 @@
         <div class="rounded-2xl border border-white/10 bg-zinc-900/40 p-6 backdrop-blur-xl">
           <h3 class="text-sm font-semibold text-white tracking-tight mb-4 flex items-center gap-2">
             <i data-lucide="building" class="w-4 h-4 text-emerald-400"></i>
-            Eng faol ish beruvchi kompaniyalar
+            Top Hiring Companies
           </h3>
           <div class="relative h-64 flex items-center justify-center">
             <canvas id="companiesChart"></canvas>
@@ -382,41 +382,41 @@
             <i data-lucide="user-check" class="w-5 h-5"></i>
           </div>
           <div>
-            <h3 class="text-lg font-semibold text-white tracking-tight">HeadHunter (hh.uz) Hisob va Xavfsizlik</h3>
-            <p class="text-xs text-zinc-400">Vakansiyalarni qidirish va eksport qilish uchun hisobga kirish shart emas.</p>
+            <h3 class="text-lg font-semibold text-white tracking-tight">HeadHunter (hh.uz) Account & Security</h3>
+            <p class="text-xs text-zinc-400">Account login is optional. Public search works at full capacity without login.</p>
           </div>
         </div>
 
         <div class="p-4 rounded-xl bg-indigo-500/5 border border-indigo-500/15 mb-6 text-xs text-indigo-300 leading-relaxed">
-          <strong>💡 Maslahat:</strong> Vakansiyalarni yig'ish tizimi 100% ochiq rejimda ishlaydi. Loginsiz qidirish hech qanday bot-blokirovkasiga yoki Captcha to'sig'iga uchramaydi va eng tez ishlaydi. Agar siz o'z rezyumelaringiz yoki shaxsiy kontaktlaringizni bog'lamoqchi bo'lsangiz, quyidagi sozlamalardan foydalanishingiz mumkin.
+          <strong>💡 Pro Tip:</strong> The scraper operates in 100% public mode by default. Public search avoids bot-protection and captcha challenges, and provides maximum speed. You may optionally link session cookies below if you wish to query applicant-specific resources.
         </div>
 
         <form id="authForm" onsubmit="handleAuth(event)" class="space-y-4">
           <div>
-            <label class="block text-xs font-medium text-zinc-300 mb-1.5">HH.uz Hisob Emaili yoki Telefon raqami</label>
+            <label class="block text-xs font-medium text-zinc-300 mb-1.5">HH.uz Account Email or Phone</label>
             <input 
               type="text" 
               id="authEmail" 
-              placeholder="user@example.com yoki +998901234567" 
+              placeholder="user@example.com or +998901234567" 
               class="w-full px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-xl text-xs text-white placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
             />
           </div>
 
           <div>
-            <label class="block text-xs font-medium text-zinc-300 mb-1.5">Sessiya Cookie (Ixtiyoriy - Captchasiz kirish uchun)</label>
+            <label class="block text-xs font-medium text-zinc-300 mb-1.5">Session Cookies (Optional - for authenticated access)</label>
             <textarea 
               id="authCookies" 
               rows="3" 
-              placeholder="hhtoken=...; hhauth=... (Brauzeringizdagi cookie nusxasi)"
+              placeholder="hhtoken=...; hhauth=... (Cookies copied from your browser session)"
               class="w-full px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-xl text-xs text-white placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono"
             ></textarea>
-            <span class="text-[11px] text-zinc-500 mt-1 block">Brauzerda hh.uz ga kirgan holatdagi cookielarni kiritish orqali barcha cheklovlarni chetlab o'tish mumkin.</span>
+            <span class="text-[11px] text-zinc-500 mt-1 block">Injecting authenticated session cookies allows bypassing restrictions without triggering interactive captchas.</span>
           </div>
 
           <div class="flex items-center justify-between pt-2">
-            <span id="authStatusText" class="text-xs text-zinc-400">Holat: Loginsiz xavfsiz rejim</span>
+            <span id="authStatusText" class="text-xs text-zinc-400">Status: Safe public mode (No login required)</span>
             <button type="submit" class="px-5 py-2.5 rounded-xl bg-white text-zinc-950 font-semibold text-xs hover:bg-zinc-200 transition shadow-sm">
-              Sessiyani saqlash
+              Save Session
             </button>
           </div>
         </form>
@@ -431,12 +431,12 @@
       <!-- Modal Header -->
       <div class="flex items-start justify-between pb-4 border-b border-white/10">
         <div>
-          <span id="modalCompany" class="text-xs font-medium text-indigo-400">Kompaniya nomi</span>
-          <h3 id="modalTitle" class="text-lg font-bold text-white tracking-tight mt-0.5">Vakansiya Nomi</h3>
+          <span id="modalCompany" class="text-xs font-medium text-indigo-400">Company Name</span>
+          <h3 id="modalTitle" class="text-lg font-bold text-white tracking-tight mt-0.5">Job Title</h3>
           <div class="flex items-center gap-3 mt-1 text-xs text-zinc-400">
-            <span id="modalSalary" class="text-emerald-400 font-semibold">Oylik maosh</span>
+            <span id="modalSalary" class="text-emerald-400 font-semibold">Salary</span>
             <span>•</span>
-            <span id="modalExperience">Tajriba</span>
+            <span id="modalExperience">Experience</span>
           </div>
         </div>
         <button onclick="closeModal()" class="p-1.5 rounded-lg border border-white/10 text-zinc-400 hover:text-white hover:bg-white/5 transition">
@@ -447,36 +447,36 @@
       <!-- Modal Body -->
       <div class="py-4 space-y-4 overflow-y-auto flex-1 text-xs leading-relaxed text-zinc-300">
         <div>
-          <h4 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2">Joylashuv va Manzil</h4>
+          <h4 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2">Location & Address</h4>
           <p id="modalAddress" class="text-zinc-300">-</p>
         </div>
 
         <div>
-          <h4 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2">Talab qilinadigan ko'nikmalar (Key Skills)</h4>
+          <h4 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2">Key Skills Required</h4>
           <div id="modalSkills" class="flex flex-wrap gap-1.5">
-            <span class="text-zinc-500 italic">Ko'nikmalar ko'rsatilmagan yoki umumiy qidiruv rejimida yuklanmagan.</span>
+            <span class="text-zinc-500 italic">No specific skills listed or not loaded in fast mode.</span>
           </div>
         </div>
 
         <div>
-          <h4 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2">Vakansiya tavsifi</h4>
-          <p id="modalDescription" class="whitespace-pre-line text-zinc-300 bg-black/30 p-3.5 rounded-xl border border-white/5">Tavsif mavjud emas.</p>
+          <h4 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2">Job Description</h4>
+          <p id="modalDescription" class="whitespace-pre-line text-zinc-300 bg-black/30 p-3.5 rounded-xl border border-white/5">Description not loaded (fast mode). You can view the full listing directly on hh.uz.</p>
         </div>
 
         <div>
-          <h4 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2">Kontaktlar</h4>
+          <h4 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2">Contacts</h4>
           <div class="p-3 bg-white/[0.02] border border-white/10 rounded-xl space-y-1">
             <p><strong>Email:</strong> <span id="modalEmail" class="text-zinc-300">N/A</span></p>
-            <p><strong>Telefon:</strong> <span id="modalPhone" class="text-zinc-300">N/A</span></p>
+            <p><strong>Phone:</strong> <span id="modalPhone" class="text-zinc-300">N/A</span></p>
           </div>
         </div>
       </div>
 
       <!-- Modal Footer -->
       <div class="pt-4 border-t border-white/10 flex items-center justify-between">
-        <span class="text-[11px] text-zinc-500">HeadHunter ochiq ma'lumotlar bazasi</span>
+        <span class="text-[11px] text-zinc-500">HeadHunter Public Database</span>
         <a id="modalLink" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs transition">
-          <span>hh.uz da ochish</span>
+          <span>Open on hh.uz</span>
           <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
         </a>
       </div>
@@ -562,11 +562,11 @@
       const progressPercent = document.getElementById("progressPercent");
 
       searchBtn.disabled = true;
-      searchBtnText.innerText = "Yig'ilmoqda...";
+      searchBtnText.innerText = "Scraping...";
       progressContainer.classList.remove("hidden");
       progressBar.style.width = "25%";
       progressPercent.innerText = "25%";
-      progressMessage.innerText = `'${query}' bo'yicha sahifalar tahlil qilinmoqda...`;
+      progressMessage.innerText = `Analyzing pages for '${query}'...`;
 
       try {
         const payload = {
@@ -586,7 +586,7 @@
 
         if (!response.ok) {
           const err = await response.json();
-          alert("Xatolik: " + (err.detail || "Qidiruvda xatolik yuz berdi"));
+          alert("Error: " + (err.detail || "Failed to search vacancies."));
           return;
         }
 
@@ -595,7 +595,7 @@
 
         progressBar.style.width = "100%";
         progressPercent.innerText = "100%";
-        progressMessage.innerText = `Tayyor! ${currentVacancies.length} ta vakansiya topildi.`;
+        progressMessage.innerText = `Ready! Found ${currentVacancies.length} vacancies.`;
 
         setTimeout(() => {
           progressContainer.classList.add("hidden");
@@ -605,10 +605,10 @@
         updateStats();
 
       } catch (err) {
-        alert("Server bilan ulanishda xatolik yuz berdi: " + err.message);
+        alert("Server connection error: " + err.message);
       } finally {
         searchBtn.disabled = false;
-        searchBtnText.innerText = "Vakansiyalarni yig'ish";
+        searchBtnText.innerText = "Scrape Vacancies";
         lucide.createIcons();
       }
     }
@@ -639,7 +639,7 @@
         tbody.innerHTML = `
           <tr>
             <td colspan="6" class="py-8 text-center text-zinc-500">
-              Hech qanday vakansiya topilmadi.
+              No matching vacancies found.
             </td>
           </tr>
         `;
@@ -647,13 +647,13 @@
       }
 
       tbody.innerHTML = filtered.map((v, i) => {
-        const isRemote = (v.tags && v.tags.some(t => t.toLowerCase().includes("удал") || t.toLowerCase().includes("remote"))) || (v.address && v.address.toLowerCase().includes("удал"));
+        const isRemote = (v.tags && v.tags.some(t => t.toLowerCase().includes("удал") || t.toLowerCase().includes("remote"))) || (v.address && (v.address.toLowerCase().includes("удал") || v.address.toLowerCase().includes("remote")));
         return `
           <tr class="hover:bg-white/[0.02] transition">
             <td class="py-3.5 px-4">
               <div class="font-semibold text-white tracking-tight">${escapeHtml(v.title)}</div>
               <div class="flex items-center gap-1.5 mt-1 flex-wrap">
-                ${isRemote ? `<span class="px-2 py-0.5 rounded text-[10px] font-medium bg-sky-500/10 text-sky-400 border border-sky-500/20">Remote / Masofaviy</span>` : ''}
+                ${isRemote ? `<span class="px-2 py-0.5 rounded text-[10px] font-medium bg-sky-500/10 text-sky-400 border border-sky-500/20">Remote</span>` : ''}
                 ${(v.tags || []).slice(0, 2).map(t => `<span class="px-1.5 py-0.5 rounded text-[10px] bg-white/[0.04] text-zinc-400">${escapeHtml(t)}</span>`).join('')}
               </div>
             </td>
@@ -661,7 +661,7 @@
               ${escapeHtml(v.company)}
             </td>
             <td class="py-3.5 px-4">
-              <span class="font-medium ${v.salary !== "Ko'rsatilmagan" ? 'text-emerald-400 font-semibold' : 'text-zinc-500'}">
+              <span class="font-medium ${v.salary !== "Not specified" && v.salary !== "Ko'rsatilmagan" ? 'text-emerald-400 font-semibold' : 'text-zinc-500'}">
                 ${escapeHtml(v.salary)}
               </span>
             </td>
@@ -676,7 +676,7 @@
                 onclick="openModal(${i})"
                 class="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-indigo-300 hover:text-white transition font-medium"
               >
-                Batafsil
+                Details
               </button>
             </td>
           </tr>
@@ -695,12 +695,12 @@
         document.getElementById("statTotal").innerText = stats.total;
         document.getElementById("statSalaryCount").innerText = stats.with_salary;
         document.getElementById("statRemoteCount").innerText = stats.remote_count;
-        document.getElementById("statRemotePercent").innerText = stats.remote_percent + "% barcha vakansiyalardan";
+        document.getElementById("statRemotePercent").innerText = stats.remote_percent + "% of all vacancies";
 
         if (stats.avg_salary_usd > 0) {
           document.getElementById("statAvgSalary").innerText = "$" + stats.avg_salary_usd.toLocaleString();
         } else if (stats.avg_salary_uzs > 0) {
-          document.getElementById("statAvgSalary").innerText = (stats.avg_salary_uzs / 1000000).toFixed(1) + " mln so'm";
+          document.getElementById("statAvgSalary").innerText = (stats.avg_salary_uzs / 1000000).toFixed(1) + "M UZS";
         } else {
           document.getElementById("statAvgSalary").innerText = "-";
         }
@@ -724,7 +724,7 @@
         expChart = new Chart(ctx1, {
           type: 'doughnut',
           data: {
-            labels: expLabels.length ? expLabels : ['Ma\'lumot yo\'q'],
+            labels: expLabels.length ? expLabels : ['No data available'],
             datasets: [{
               data: expData.length ? expData : [1],
               backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'],
@@ -753,9 +753,9 @@
         compChart = new Chart(ctx2, {
           type: 'bar',
           data: {
-            labels: compLabels.length ? compLabels : ['Ma\'lumot yo\'q'],
+            labels: compLabels.length ? compLabels : ['No data available'],
             datasets: [{
-              label: 'Vakansiyalar soni',
+              label: 'Vacancies Count',
               data: compData.length ? compData : [0],
               backgroundColor: '#6366f1',
               borderRadius: 6
@@ -783,12 +783,12 @@
       const v = currentVacancies[index];
       if (!v) return;
 
-      document.getElementById("modalCompany").innerText = v.company || "Noma'lum kompaniya";
-      document.getElementById("modalTitle").innerText = v.title || "Vakansiya";
-      document.getElementById("modalSalary").innerText = v.salary || "Ko'rsatilmagan";
-      document.getElementById("modalExperience").innerText = v.experience || "Tajriba ko'rsatilmagan";
-      document.getElementById("modalAddress").innerText = v.address || "Toshkent";
-      document.getElementById("modalDescription").innerText = v.description || "Vakansiya tavsifi yuklanmagan (Tezkor rejim). Batafsil ma'lumotni to'g'ridan-to'g'ri hh.uz havolasidan ko'rishingiz mumkin.";
+      document.getElementById("modalCompany").innerText = v.company || "Unknown Company";
+      document.getElementById("modalTitle").innerText = v.title || "Vacancy";
+      document.getElementById("modalSalary").innerText = v.salary || "Not specified";
+      document.getElementById("modalExperience").innerText = v.experience || "Not specified";
+      document.getElementById("modalAddress").innerText = v.address || "Tashkent";
+      document.getElementById("modalDescription").innerText = v.description || "Description not loaded (fast mode). You can view the full listing directly on hh.uz.";
       document.getElementById("modalEmail").innerText = v.email || "N/A";
       document.getElementById("modalPhone").innerText = v.phone || "N/A";
       document.getElementById("modalLink").href = v.link || "#";
@@ -799,7 +799,7 @@
           <span class="px-2.5 py-1 rounded-md bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 font-medium">${escapeHtml(s)}</span>
         `).join('');
       } else {
-        skillsEl.innerHTML = `<span class="text-zinc-500 italic">Vakansiya sahifasida alohida ko'nikmalar ko'rsatilmagan.</span>`;
+        skillsEl.innerHTML = `<span class="text-zinc-500 italic">No specific skills listed or not loaded in fast mode.</span>`;
       }
 
       document.getElementById("detailModal").classList.remove("hidden");
@@ -822,7 +822,7 @@
       });
 
       const data = await res.json();
-      document.getElementById("authStatusText").innerText = "Holat: " + data.message;
+      document.getElementById("authStatusText").innerText = "Status: " + data.message;
       alert(data.message);
     }
 

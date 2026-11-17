@@ -24,7 +24,7 @@ latest_search_results: List[Dict[str, Any]] = []
 search_state = {
     "is_searching": False,
     "progress": 0,
-    "message": "Tayyor",
+    "message": "Ready",
     "total_found": 0
 }
 
@@ -69,11 +69,11 @@ async def start_search(req: SearchRequest):
     
     query = req.query.strip()
     if not query:
-        raise HTTPException(status_code=400, detail="Qidiruv so'zi kiritilishi shart!")
+        raise HTTPException(status_code=400, detail="Search query cannot be empty!")
 
     search_state["is_searching"] = True
     search_state["progress"] = 10
-    search_state["message"] = f"'{query}' bo'yicha qidiruv boshlanmoqda..."
+    search_state["message"] = f"Searching for '{query}'..."
     search_state["total_found"] = 0
 
     def progress_callback(info: Dict[str, Any]):
@@ -105,7 +105,7 @@ async def start_search(req: SearchRequest):
         search_state["total_found"] = len(results)
         search_state["is_searching"] = False
         search_state["progress"] = 100
-        search_state["message"] = f"Muvaffaqiyatli! {len(results)} ta vakansiya yuklandi."
+        search_state["message"] = f"Success! Loaded {len(results)} vacancies."
         return {
             "success": True,
             "count": len(results),
@@ -113,7 +113,7 @@ async def start_search(req: SearchRequest):
         }
     except Exception as e:
         search_state["is_searching"] = False
-        search_state["message"] = f"Xatolik yuz berdi: {str(e)}"
+        search_state["message"] = f"Error occurred: {str(e)}"
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/results")
@@ -131,6 +131,7 @@ async def get_stats():
             "total": 0,
             "with_salary": 0,
             "remote_count": 0,
+            "remote_percent": 0,
             "avg_salary_usd": 0,
             "avg_salary_uzs": 0,
             "top_companies": [],
@@ -160,15 +161,15 @@ async def get_stats():
 
         # Remote check
         is_remote = any("удал" in str(t).lower() or "remote" in str(t).lower() for t in v.get("tags", []))
-        if is_remote or "удал" in str(v.get("address", "")).lower():
+        if is_remote or "удал" in str(v.get("address", "")).lower() or "remote" in str(v.get("address", "")).lower():
             remote_count += 1
 
         # Company
-        comp = v.get("company", "Noma'lum")
+        comp = v.get("company", "Unknown")
         companies[comp] = companies.get(comp, 0) + 1
 
         # Experience
-        exp = v.get("experience", "Boshqa")
+        exp = v.get("experience", "Other")
         exp_dist[exp] = exp_dist.get(exp, 0) + 1
 
     top_comps = sorted([{"name": k, "count": v} for k, v in companies.items()], key=lambda x: x["count"], reverse=True)[:5]
@@ -195,24 +196,23 @@ async def login_user(req: LoginRequest):
                 k, v = item.strip().split("=", 1)
                 scraper.session.cookies.set(k.strip(), v.strip(), domain=".hh.uz")
         scraper.is_authenticated = True
-        scraper.auth_user = req.email or "Sessiya foydalanuvchisi"
-        return {"success": True, "message": "Cookie sessiyasi muvaffaqiyatli saqlandi!"}
+        scraper.auth_user = req.email or "Session User"
+        return {"success": True, "message": "Session cookies successfully saved!"}
 
     if not req.email:
-        raise HTTPException(status_code=400, detail="Email kiritilishi shart.")
+        raise HTTPException(status_code=400, detail="Email is required.")
 
-    # Note: HeadHunter requires OTP codes for direct applicant login
     scraper.auth_user = req.email
     return {
         "success": True, 
         "requires_otp": True,
-        "message": f"{req.email} uchun avtorizatsiya sozlamasi qabul qilindi. Vakansiyalarni qidirish loginsiz ham to'liq quvvatda ishlaydi!"
+        "message": f"Authorization settings saved for {req.email}. Public vacancy scraping works at full capacity without login!"
     }
 
 @app.get("/api/export/csv")
 async def export_csv():
     if not latest_search_results:
-        raise HTTPException(status_code=400, detail="Eksport qilish uchun avval vakansiyalarni qidiring.")
+        raise HTTPException(status_code=400, detail="Please perform a search before exporting.")
     
     df = scraper.to_dataframe(latest_search_results)
     stream = io.StringIO()
@@ -222,41 +222,41 @@ async def export_csv():
     return Response(
         content=csv_bytes,
         media_type="text/csv",
-        headers={"Content-Disposition": 'attachment; filename="hh_vakansiyalar.csv"'}
+        headers={"Content-Disposition": 'attachment; filename="hh_vacancies.csv"'}
     )
 
 @app.get("/api/export/excel")
 async def export_excel():
     if not latest_search_results:
-        raise HTTPException(status_code=400, detail="Eksport qilish uchun avval vakansiyalarni qidiring.")
+        raise HTTPException(status_code=400, detail="Please perform a search before exporting.")
     
     df = scraper.to_dataframe(latest_search_results)
     output = io.BytesIO()
     with pd.ExcelWriter(output, engine='openpyxl') as writer:
-        df.to_excel(writer, index=False, sheet_name='Vakansiyalar')
+        df.to_excel(writer, index=False, sheet_name='Vacancies')
     
     return Response(
         content=output.getvalue(),
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        headers={"Content-Disposition": 'attachment; filename="hh_vakansiyalar.xlsx"'}
+        headers={"Content-Disposition": 'attachment; filename="hh_vacancies.xlsx"'}
     )
 
 @app.get("/api/export/json")
 async def export_json():
     if not latest_search_results:
-        raise HTTPException(status_code=400, detail="Eksport qilish uchun avval vakansiyalarni qidiring.")
+        raise HTTPException(status_code=400, detail="Please perform a search before exporting.")
     
     json_bytes = json.dumps(latest_search_results, ensure_ascii=False, indent=2).encode('utf-8')
     return Response(
         content=json_bytes,
         media_type="application/json",
-        headers={"Content-Disposition": 'attachment; filename="hh_vakansiyalar.json"'}
+        headers={"Content-Disposition": 'attachment; filename="hh_vacancies.json"'}
     )
 
 if __name__ == "__main__":
     import uvicorn
     print("\n" + "="*60)
-    print("🚀 HH Vacancy Intelligence Server ishga tushmoqda...")
-    print("🌐 Brauzeringizda oching: http://localhost:8000")
+    print("🚀 HH Vacancy Intelligence Server is starting...")
+    print("🌐 Open in your browser: http://localhost:8000")
     print("="*60 + "\n")
     uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=False)

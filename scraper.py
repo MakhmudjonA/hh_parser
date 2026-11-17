@@ -12,7 +12,7 @@ class HHScraper:
         self.session.headers.update({
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-            "Accept-Language": "ru-RU,ru;q=0.9,uz-UZ,uz;q=0.8,en-US;q=0.7,en;q=0.6",
+            "Accept-Language": "en-US,en;q=0.9,ru-RU;q=0.8,ru;q=0.7",
             "Sec-Ch-Ua": '"Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"',
             "Sec-Ch-Ua-Mobile": "?0",
             "Sec-Ch-Ua-Platform": '"Windows"',
@@ -30,8 +30,8 @@ class HHScraper:
     def parse_salary(self, text: str) -> Dict[str, Any]:
         """Parse salary text into min, max, currency, and display text."""
         clean = text.replace('\xa0', ' ').replace('\u202f', ' ').strip()
-        if not clean or clean.lower() in ["ko'rsatilmagan", "до вычета налогов", "на руки"]:
-            return {"raw": "Ko'rsatilmagan", "min": None, "max": None, "currency": None}
+        if not clean or clean.lower() in ["not specified", "до вычета налогов", "на руки", "ko'rsatilmagan"]:
+            return {"raw": "Not specified", "min": None, "max": None, "currency": None}
 
         currency = "UZS"
         if "$" in clean or "USD" in clean:
@@ -44,7 +44,7 @@ class HHScraper:
             currency = "UZS"
 
         # Extract all numbers
-        # E.g. "1 000 – 2 000 $" or "от 15 000 000"
+        # E.g. "1 000 – 2 000 $" or "from 15 000 000"
         numbers = re.findall(r'(\d[\d\s]*\d|\d+)', clean)
         cleaned_numbers = []
         for n in numbers:
@@ -55,9 +55,9 @@ class HHScraper:
         sal_min = None
         sal_max = None
         if len(cleaned_numbers) == 1:
-            if "от" in clean.lower():
+            if any(w in clean.lower() for w in ["от", "from"]):
                 sal_min = cleaned_numbers[0]
-            elif "до" in clean.lower():
+            elif any(w in clean.lower() for w in ["до", "up to", "to"]):
                 sal_max = cleaned_numbers[0]
             else:
                 sal_min = cleaned_numbers[0]
@@ -128,7 +128,7 @@ class HHScraper:
                     "status": "fetching_page",
                     "current_page": page + 1,
                     "total_pages": pages,
-                    "message": f"{page + 1}-sahifa so'ralmoqda...",
+                    "message": f"Requesting page {page + 1} of {pages}...",
                     "count": len(results)
                 })
 
@@ -148,7 +148,7 @@ class HHScraper:
                         "status": "no_more_results",
                         "current_page": page + 1,
                         "total_pages": pages,
-                        "message": f"{page + 1}-sahifada boshqa vakansiyalar topilmadi.",
+                        "message": f"No more vacancies found on page {page + 1}.",
                         "count": len(results)
                     })
                 break
@@ -174,7 +174,7 @@ class HHScraper:
                         card.find(attrs={"data-qa": "vacancy-serp__vacancy-employer-text"}) or 
                         card.find(attrs={"data-qa": "vacancy-serp__vacancy-employer"})
                     )
-                    company = comp_el.text.strip() if comp_el else "Noma'lum kompaniya"
+                    company = comp_el.text.strip() if comp_el else "Unknown Company"
                     company_url = comp_el.get("href", "") if comp_el and comp_el.name == "a" else ""
                     if company_url and company_url.startswith("/"):
                         company_url = "https://hh.uz" + company_url
@@ -184,7 +184,7 @@ class HHScraper:
                     logo_url = logo_img.get("src", "") if logo_img else ""
 
                     # Salary
-                    salary_str = "Ko'rsatilmagan"
+                    salary_str = "Not specified"
                     for el in card.find_all(["span", "div"]):
                         t = el.text.strip()
                         if any(c in t for c in ["сум", "$", "USD", "руб", "EUR", "₽"]) and len(t) < 60:
@@ -194,11 +194,11 @@ class HHScraper:
 
                     # Experience
                     exp_el = card.find(attrs={"data-qa": lambda x: x and "experience" in str(x)})
-                    experience_str = exp_el.text.strip() if exp_el else "Tajriba ko'rsatilmagan"
+                    experience_str = exp_el.text.strip() if exp_el else "Not specified"
 
                     # Address / Metro / District
                     addr_el = card.find(attrs={"data-qa": "vacancy-serp__vacancy-address"})
-                    address = addr_el.text.strip() if addr_el else "Toshkent"
+                    address = addr_el.text.strip() if addr_el else "Tashkent"
 
                     # Tags / Badges (Remote, Urgent, etc.)
                     tags = []
@@ -245,7 +245,7 @@ class HHScraper:
                         "status": "fetching_details",
                         "current_item": idx + 1,
                         "total_items": total_items,
-                        "message": f"Batafsil ma'lumot yuklanmoqda ({idx + 1}/{total_items}): {item['title'][:30]}...",
+                        "message": f"Fetching details ({idx + 1}/{total_items}): {item['title'][:30]}...",
                         "count": len(results)
                     })
                 
@@ -274,33 +274,33 @@ class HHScraper:
             progress_callback({
                 "status": "completed",
                 "total_pages": pages,
-                "message": f"Muvaffaqiyatli yakunlandi! Jami {len(results)} ta vakansiya topildi.",
+                "message": f"Successfully completed! Found {len(results)} vacancies.",
                 "count": len(results)
             })
 
         return results
 
     def to_dataframe(self, vacancies: List[Dict[str, Any]]) -> pd.DataFrame:
-        """Convert list of vacancy dicts to Pandas DataFrame."""
+        """Convert list of vacancy dicts to Pandas DataFrame with English headers."""
         rows = []
         for v in vacancies:
             rows.append({
                 "ID": v.get("id"),
-                "Lavozim": v.get("title"),
-                "Kompaniya": v.get("company"),
-                "Oylik Maosh": v.get("salary"),
-                "Tajriba": v.get("experience"),
-                "Manzil": v.get("address"),
-                "Ko'nikmalar": ", ".join(v.get("skills", [])),
+                "Job Title": v.get("title"),
+                "Company": v.get("company"),
+                "Salary": v.get("salary"),
+                "Experience": v.get("experience"),
+                "Location": v.get("address"),
+                "Key Skills": ", ".join(v.get("skills", [])),
                 "Email": v.get("email"),
-                "Telefon": v.get("phone"),
-                "Teglar": ", ".join(v.get("tags", [])),
-                "Havola": v.get("link")
+                "Phone": v.get("phone"),
+                "Tags": ", ".join(v.get("tags", [])),
+                "Link": v.get("link")
             })
         return pd.DataFrame(rows)
 
     def export_csv(self, vacancies: List[Dict[str, Any]], filepath: str) -> str:
-        """Export to CSV with UTF-8 BOM so Excel opens Uzbek/Russian Cyrillic properly."""
+        """Export to CSV with UTF-8 BOM so Excel opens English/Cyrillic properly."""
         df = self.to_dataframe(vacancies)
         df.to_csv(filepath, index=False, encoding='utf-8-sig')
         return filepath

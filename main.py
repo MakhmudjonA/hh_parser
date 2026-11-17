@@ -9,9 +9,9 @@ def open_browser():
 
 if __name__ == "__main__":
     print("\n" + "="*65)
-    print("🚀 HH Vacancy Intelligence Dashboard ishga tushmoqda...")
-    print("🌐 Brauzer manzili: http://localhost:8000")
-    print("🐳 Docker rejimida ishga tushirish uchun: docker run -p 8000:8000 hh-parser")
+    print("🚀 HH Vacancy Intelligence Dashboard is starting...")
+    print("🌐 Web UI available at: http://localhost:8000")
+    print("🐳 Run with Docker: docker run -p 8000:8000 hh-parser")
     print("="*65 + "\n")
     
     # Optionally open browser automatically in local dev

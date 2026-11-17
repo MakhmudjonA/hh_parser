@@ -1,0 +1,13 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.git
+.gitignore
+*.png
+captcha_src.txt
+*.csv
+*.xlsx
+chromedriver.exe
+hh_parser.py
+!requirements.txt

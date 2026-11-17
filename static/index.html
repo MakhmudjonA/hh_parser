@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="uz" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HH Vacancy Intelligence | Professional HeadHunter Parser</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            zinc: {
+              950: '#09090b',
+              900: '#121215',
+              850: '#18181b',
+              800: '#27272a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    /* Custom subtle scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #09090b;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #27272a;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3f3f46;
+    }
+  </style>
+</head>
+<body class="bg-zinc-950 text-zinc-100 min-h-screen selection:bg-indigo-500/30 selection:text-indigo-200 relative overflow-x-hidden">
+
+  <!-- Ambient light spotlight glow -->
+  <div class="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(ellipse_85%_70%_at_50%_-20%,rgba(99,102,241,0.15),rgba(255,255,255,0))]"></div>
+
+  <!-- Main Container -->
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- Top Navigation / Header -->
+    <header class="flex items-center justify-between py-4 mb-8 border-b border-white/5">
+      <div class="flex items-center gap-3">
+        <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20 ring-1 ring-white/20">
+          <i data-lucide="layers" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-bold text-lg tracking-tight text-white">HH Parser Pro</h1>
+            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">v2.4 Docker Ready</span>
+          </div>
+          <p class="text-xs text-zinc-400">HeadHunter vakansiyalarini tahlil qilish va eksport qilish tizimi</p>
+        </div>
+      </div>
+
+      <!-- Right Header Actions -->
+      <div class="flex items-center gap-3">
+        <!-- Live status badge -->
+        <div id="statusBadge" class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-white/[0.03] border border-white/10 text-zinc-300">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </span>
+          <span id="statusText">Tizim tayyor</span>
+        </div>
+
+        <button onclick="switchTab('settingsTab')" class="p-2 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.06] text-zinc-400 hover:text-white transition" title="Sozlamalar va hisob">
+          <i data-lucide="settings" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Hero Search Section -->
+    <section class="mb-8">
+      <div class="relative rounded-2xl border border-white/10 bg-zinc-900/40 p-6 backdrop-blur-xl shadow-2xl">
+        <div class="max-w-3xl mb-5">
+          <span class="text-[11px] font-semibold uppercase tracking-wider text-indigo-400">Tezkor Ma'lumot Qidiruvi</span>
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white mt-1">Qaysi sohada vakansiya qidiryapsiz?</h2>
+          <p class="text-sm text-zinc-400 mt-1">hh.uz platformasidagi barcha yangi vakansiyalarni filtrlash, tahlil qilish va bir zumda CSV/Excel ga yuklab olish.</p>
+        </div>
+
+        <!-- Search Form -->
+        <form id="searchForm" onsubmit="handleSearch(event)" class="space-y-4">
+          <div class="flex flex-col sm:flex-row gap-3">
+            <div class="relative flex-1">
+              <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500"></i>
+              <input 
+                type="text" 
+                id="searchQuery" 
+                required
+                placeholder="Kasb yoki texnologiya (masalan: Python, Flutter, Frontend, DevOps...)" 
+                class="w-full pl-12 pr-4 py-3.5 bg-black/40 border border-white/10 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition"
+                value="Python"
+              />
+            </div>
+            <button 
+              type="submit" 
+              id="searchBtn"
+              class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm transition shadow-lg shadow-indigo-600/30 active:scale-[0.98]"
+            >
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+              <span id="searchBtnText">Vakansiyalarni yig'ish</span>
+            </button>
+          </div>
+
+          <!-- Quick Presets -->
+          <div class="flex items-center gap-2 flex-wrap text-xs text-zinc-400 pt-1">
+            <span class="text-zinc-500">Ommabop:</span>
+            <button type="button" onclick="setPreset('Python')" class="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/5 hover:border-white/15 transition">Python</button>
+            <button type="button" onclick="setPreset('Flutter')" class="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/5 hover:border-white/15 transition">Flutter</button>
+            <button type="button" onclick="setPreset('React')" class="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/5 hover:border-white/15 transition">React / Frontend</button>
+            <button type="button" onclick="setPreset('Java')" class="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/5 hover:border-white/15 transition">Java</button>
+            <button type="button" onclick="setPreset('DevOps')" class="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/5 hover:border-white/15 transition">DevOps</button>
+            <button type="button" onclick="setPreset('Data Analyst')" class="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/5 hover:border-white/15 transition">Data Analyst</button>
+            <button type="button" onclick="setPreset('Project Manager')" class="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/5 hover:border-white/15 transition">Project Manager</button>
+          </div>
+
+          <!-- Expandable Advanced Filters Toggle -->
+          <div class="pt-2 border-t border-white/5 flex items-center justify-between">
+            <button 
+              type="button" 
+              onclick="toggleFilters()" 
+              class="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-400 hover:text-indigo-400 transition"
+            >
+              <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i>
+              <span>Kengaytirilgan filtrlar</span>
+              <i data-lucide="chevron-down" id="filterChevron" class="w-3.5 h-3.5 transition-transform duration-200"></i>
+            </button>
+
+            <!-- Detailed scraping toggle -->
+            <label class="flex items-center gap-2 cursor-pointer text-xs text-zinc-300">
+              <input type="checkbox" id="fetchDetails" class="rounded border-zinc-700 text-indigo-600 focus:ring-indigo-500 bg-zinc-900" />
+              <span>Har bir vakansiyaning batafsil ma'lumotlarini (skills, kontaktlar) yuklash</span>
+            </label>
+          </div>
+
+          <!-- Advanced Filters Box -->
+          <div id="advancedFilters" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-3">
+            <div>
+              <label class="block text-xs font-medium text-zinc-400 mb-1.5">Hudud / Shahar</label>
+              <select id="filterArea" class="w-full bg-zinc-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                <option value="2759">Toshkent</option>
+                <option value="97">Butun O'zbekiston</option>
+                <option value="2760">Samarqand</option>
+                <option value="160">Olmaota (Qozog'iston)</option>
+                <option value="1">Moskva (Rossiya)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-zinc-400 mb-1.5">Talab etiladigan tajriba</label>
+              <select id="filterExperience" class="w-full bg-zinc-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                <option value="all">Barchasi</option>
+                <option value="noExperience">Tajribasiz (Intern / Junior)</option>
+                <option value="between1And3">1 yildan 3 yilgacha</option>
+                <option value="between3And6">3 yildan 6 yilgacha</option>
+                <option value="moreThan6">6 yildan ortiq</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-zinc-400 mb-1.5">Ish jadvali / Formati</label>
+              <select id="filterSchedule" class="w-full bg-zinc-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                <option value="all">Barchasi</option>
+                <option value="fullDay">To'liq kun</option>
+                <option value="remote">Masofaviy (Remote / Удалённо)</option>
+                <option value="flexible">Moslashuvchan grafik</option>
+                <option value="shift">Smena asosida</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-zinc-400 mb-1.5">
+                Yuklanadigan sahifalar: <span id="pagesDisplay" class="text-indigo-400 font-semibold">2 ta (~40 vakansiya)</span>
+              </label>
+              <input 
+                type="range" 
+                id="filterPages" 
+                min="1" 
+                max="5" 
+                value="2" 
+                oninput="document.getElementById('pagesDisplay').innerText = this.value + ' ta (~' + (this.value*20) + ' vakansiya)'"
+                class="w-full accent-indigo-500 cursor-pointer"
+              />
+            </div>
+          </div>
+        </form>
+
+        <!-- Live Progress Indicator -->
+        <div id="progressContainer" class="hidden mt-6 pt-4 border-t border-white/10">
+          <div class="flex items-center justify-between text-xs mb-2">
+            <span id="progressMessage" class="text-zinc-300 font-medium">Yuklanmoqda...</span>
+            <span id="progressPercent" class="text-indigo-400 font-mono">0%</span>
+          </div>
+          <div class="w-full bg-white/5 rounded-full h-2 overflow-hidden">
+            <div id="progressBar" class="bg-gradient-to-r from-indigo-500 to-violet-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <div class="flex items-center justify-between border-b border-white/10 mb-6 pb-2">
+      <div class="flex items-center gap-1 sm:gap-2">
+        <button onclick="switchTab('resultsTab')" id="tabBtn-resultsTab" class="px-4 py-2 text-xs font-semibold rounded-lg bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 transition flex items-center gap-2">
+          <i data-lucide="list" class="w-4 h-4"></i>
+          <span>Vakansiyalar Ro'yxati</span>
+          <span id="badgeCount" class="ml-1 px-1.5 py-0.2 rounded bg-indigo-500/20 text-[10px] text-indigo-300">0</span>
+        </button>
+
+        <button onclick="switchTab('analyticsTab')" id="tabBtn-analyticsTab" class="px-4 py-2 text-xs font-medium rounded-lg text-zinc-400 hover:text-white hover:bg-white/[0.04] transition flex items-center gap-2">
+          <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+          <span>Statistika & Tahlil</span>
+        </button>
+
+        <button onclick="switchTab('settingsTab')" id="tabBtn-settingsTab" class="px-4 py-2 text-xs font-medium rounded-lg text-zinc-400 hover:text-white hover:bg-white/[0.04] transition flex items-center gap-2">
+          <i data-lucide="shield-check" class="w-4 h-4"></i>
+          <span>HH.uz Hisob & Captcha</span>
+        </button>
+      </div>
+
+      <!-- Export Action Dropdown -->
+      <div class="flex items-center gap-2" id="exportButtonGroup">
+        <a href="/api/export/csv" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-400 text-xs font-medium transition">
+          <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
+          <span class="hidden sm:inline">CSV (Excel)</span>
+        </a>
+        <a href="/api/export/excel" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 text-blue-400 text-xs font-medium transition">
+          <i data-lucide="table" class="w-3.5 h-3.5"></i>
+          <span class="hidden sm:inline">Excel (.xlsx)</span>
+        </a>
+        <a href="/api/export/json" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-zinc-300 text-xs font-medium transition">
+          <i data-lucide="file-code" class="w-3.5 h-3.5"></i>
+          <span class="hidden sm:inline">JSON</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- TAB 1: RESULTS TAB -->
+    <div id="resultsTab" class="tab-content">
+      <!-- Bento Stats Overview -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="rounded-xl border border-white/10 bg-zinc-900/40 p-4 backdrop-blur-md">
+          <div class="flex items-center justify-between text-zinc-400 mb-1">
+            <span class="text-xs uppercase tracking-wider">Jami Topildi</span>
+            <i data-lucide="briefcase" class="w-4 h-4 text-indigo-400"></i>
+          </div>
+          <div class="text-2xl font-bold tracking-tight text-white" id="statTotal">0</div>
+          <div class="text-[11px] text-zinc-500 mt-1">hh.uz qidiruv natijalari</div>
+        </div>
+
+        <div class="rounded-xl border border-white/10 bg-zinc-900/40 p-4 backdrop-blur-md">
+          <div class="flex items-center justify-between text-zinc-400 mb-1">
+            <span class="text-xs uppercase tracking-wider">Maosh Belgilangan</span>
+            <i data-lucide="banknote" class="w-4 h-4 text-emerald-400"></i>
+          </div>
+          <div class="text-2xl font-bold tracking-tight text-emerald-400" id="statSalaryCount">0</div>
+          <div class="text-[11px] text-zinc-500 mt-1">Ochiq oylik ko'rsatilgan</div>
+        </div>
+
+        <div class="rounded-xl border border-white/10 bg-zinc-900/40 p-4 backdrop-blur-md">
+          <div class="flex items-center justify-between text-zinc-400 mb-1">
+            <span class="text-xs uppercase tracking-wider">Masofaviy (Remote)</span>
+            <i data-lucide="globe" class="w-4 h-4 text-sky-400"></i>
+          </div>
+          <div class="text-2xl font-bold tracking-tight text-sky-400" id="statRemoteCount">0</div>
+          <div class="text-[11px] text-zinc-500 mt-1" id="statRemotePercent">0% barcha vakansiyalardan</div>
+        </div>
+
+        <div class="rounded-xl border border-white/10 bg-zinc-900/40 p-4 backdrop-blur-md">
+          <div class="flex items-center justify-between text-zinc-400 mb-1">
+            <span class="text-xs uppercase tracking-wider">O'rtacha Maosh</span>
+            <i data-lucide="trending-up" class="w-4 h-4 text-amber-400"></i>
+          </div>
+          <div class="text-2xl font-bold tracking-tight text-amber-400" id="statAvgSalary">-</div>
+          <div class="text-[11px] text-zinc-500 mt-1">Ko'rsatilgan maoshlar o'rtachasi</div>
+        </div>
+      </div>
+
+      <!-- Live Search & Sort in Table -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-3 mb-4">
+        <div class="relative w-full sm:w-80">
+          <i data-lucide="filter" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"></i>
+          <input 
+            type="text" 
+            id="tableFilter" 
+            oninput="renderVacancies()" 
+            placeholder="Natijalar ichidan qidirish (kompaniya, lavozim)..." 
+            class="w-full pl-9 pr-3 py-2 bg-zinc-900/60 border border-white/10 rounded-lg text-xs text-white placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          />
+        </div>
+
+        <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+          <select id="sortSelect" onchange="renderVacancies()" class="bg-zinc-900 border border-white/10 rounded-lg px-3 py-2 text-xs text-zinc-300 focus:outline-none">
+            <option value="default">Saralash: Standart</option>
+            <option value="salary_high">Oylik maosh: Yuqoridan pastga</option>
+            <option value="salary_low">Oylik maosh: Pastdan yuqoriga</option>
+            <option value="title_asc">Lavozim: A - Z</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Vacancies Table -->
+      <div class="rounded-2xl border border-white/10 bg-zinc-900/40 backdrop-blur-xl overflow-hidden shadow-2xl">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-white/10 bg-white/[0.02] text-zinc-400 uppercase tracking-wider font-semibold">
+                <th class="py-3 px-4">Lavozim / Vakansiya</th>
+                <th class="py-3 px-4">Kompaniya</th>
+                <th class="py-3 px-4">Oylik Maosh</th>
+                <th class="py-3 px-4">Talab qilinadigan tajriba</th>
+                <th class="py-3 px-4">Joylashuv</th>
+                <th class="py-3 px-4 text-right">Amallar</th>
+              </tr>
+            </thead>
+            <tbody id="vacanciesTbody" class="divide-y divide-white/5 text-zinc-300">
+              <tr>
+                <td colspan="6" class="py-12 text-center text-zinc-500">
+                  <i data-lucide="inbox" class="w-10 h-10 mx-auto mb-3 opacity-40"></i>
+                  <p class="text-sm">Hali vakansiyalar yuklanmadi.</p>
+                  <p class="text-xs text-zinc-600 mt-1">Yuqoridagi qidiruv panelidan kasb nomini yozib, qidirishni bosing.</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: ANALYTICS TAB -->
+    <div id="analyticsTab" class="tab-content hidden space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Experience Distribution Chart -->
+        <div class="rounded-2xl border border-white/10 bg-zinc-900/40 p-6 backdrop-blur-xl">
+          <h3 class="text-sm font-semibold text-white tracking-tight mb-4 flex items-center gap-2">
+            <i data-lucide="pie-chart" class="w-4 h-4 text-indigo-400"></i>
+            Tajriba talabi bo'yicha taqsimot
+          </h3>
+          <div class="relative h-64 flex items-center justify-center">
+            <canvas id="experienceChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Top Companies Chart -->
+        <div class="rounded-2xl border border-white/10 bg-zinc-900/40 p-6 backdrop-blur-xl">
+          <h3 class="text-sm font-semibold text-white tracking-tight mb-4 flex items-center gap-2">
+            <i data-lucide="building" class="w-4 h-4 text-emerald-400"></i>
+            Eng faol ish beruvchi kompaniyalar
+          </h3>
+          <div class="relative h-64 flex items-center justify-center">
+            <canvas id="companiesChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: SETTINGS & HH AUTH TAB -->
+    <div id="settingsTab" class="tab-content hidden">
+      <div class="max-w-2xl mx-auto rounded-2xl border border-white/10 bg-zinc-900/40 p-6 backdrop-blur-xl">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="p-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
+            <i data-lucide="user-check" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold text-white tracking-tight">HeadHunter (hh.uz) Hisob va Xavfsizlik</h3>
+            <p class="text-xs text-zinc-400">Vakansiyalarni qidirish va eksport qilish uchun hisobga kirish shart emas.</p>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl bg-indigo-500/5 border border-indigo-500/15 mb-6 text-xs text-indigo-300 leading-relaxed">
+          <strong>💡 Maslahat:</strong> Vakansiyalarni yig'ish tizimi 100% ochiq rejimda ishlaydi. Loginsiz qidirish hech qanday bot-blokirovkasiga yoki Captcha to'sig'iga uchramaydi va eng tez ishlaydi. Agar siz o'z rezyumelaringiz yoki shaxsiy kontaktlaringizni bog'lamoqchi bo'lsangiz, quyidagi sozlamalardan foydalanishingiz mumkin.
+        </div>
+
+        <form id="authForm" onsubmit="handleAuth(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-zinc-300 mb-1.5">HH.uz Hisob Emaili yoki Telefon raqami</label>
+            <input 
+              type="text" 
+              id="authEmail" 
+              placeholder="user@example.com yoki +998901234567" 
+              class="w-full px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-xl text-xs text-white placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-zinc-300 mb-1.5">Sessiya Cookie (Ixtiyoriy - Captchasiz kirish uchun)</label>
+            <textarea 
+              id="authCookies" 
+              rows="3" 
+              placeholder="hhtoken=...; hhauth=... (Brauzeringizdagi cookie nusxasi)"
+              class="w-full px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-xl text-xs text-white placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono"
+            ></textarea>
+            <span class="text-[11px] text-zinc-500 mt-1 block">Brauzerda hh.uz ga kirgan holatdagi cookielarni kiritish orqali barcha cheklovlarni chetlab o'tish mumkin.</span>
+          </div>
+
+          <div class="flex items-center justify-between pt-2">
+            <span id="authStatusText" class="text-xs text-zinc-400">Holat: Loginsiz xavfsiz rejim</span>
+            <button type="submit" class="px-5 py-2.5 rounded-xl bg-white text-zinc-950 font-semibold text-xs hover:bg-zinc-200 transition shadow-sm">
+              Sessiyani saqlash
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Vacancy Detail Modal (Slide-Over / Dialog) -->
+  <div id="detailModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="relative w-full max-w-2xl rounded-2xl border border-white/15 bg-zinc-900 p-6 shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+      <!-- Modal Header -->
+      <div class="flex items-start justify-between pb-4 border-b border-white/10">
+        <div>
+          <span id="modalCompany" class="text-xs font-medium text-indigo-400">Kompaniya nomi</span>
+          <h3 id="modalTitle" class="text-lg font-bold text-white tracking-tight mt-0.5">Vakansiya Nomi</h3>
+          <div class="flex items-center gap-3 mt-1 text-xs text-zinc-400">
+            <span id="modalSalary" class="text-emerald-400 font-semibold">Oylik maosh</span>
+            <span>•</span>
+            <span id="modalExperience">Tajriba</span>
+          </div>
+        </div>
+        <button onclick="closeModal()" class="p-1.5 rounded-lg border border-white/10 text-zinc-400 hover:text-white hover:bg-white/5 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="py-4 space-y-4 overflow-y-auto flex-1 text-xs leading-relaxed text-zinc-300">
+        <div>
+          <h4 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2">Joylashuv va Manzil</h4>
+          <p id="modalAddress" class="text-zinc-300">-</p>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2">Talab qilinadigan ko'nikmalar (Key Skills)</h4>
+          <div id="modalSkills" class="flex flex-wrap gap-1.5">
+            <span class="text-zinc-500 italic">Ko'nikmalar ko'rsatilmagan yoki umumiy qidiruv rejimida yuklanmagan.</span>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2">Vakansiya tavsifi</h4>
+          <p id="modalDescription" class="whitespace-pre-line text-zinc-300 bg-black/30 p-3.5 rounded-xl border border-white/5">Tavsif mavjud emas.</p>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2">Kontaktlar</h4>
+          <div class="p-3 bg-white/[0.02] border border-white/10 rounded-xl space-y-1">
+            <p><strong>Email:</strong> <span id="modalEmail" class="text-zinc-300">N/A</span></p>
+            <p><strong>Telefon:</strong> <span id="modalPhone" class="text-zinc-300">N/A</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="pt-4 border-t border-white/10 flex items-center justify-between">
+        <span class="text-[11px] text-zinc-500">HeadHunter ochiq ma'lumotlar bazasi</span>
+        <a id="modalLink" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs transition">
+          <span>hh.uz da ochish</span>
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Logic JavaScript -->
+  <script>
+    let currentVacancies = [];
+    let expChart = null;
+    let compChart = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+      fetchInitialResults();
+    });
+
+    async function fetchInitialResults() {
+      try {
+        const res = await fetch("/api/results");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.vacancies && data.vacancies.length > 0) {
+            currentVacancies = data.vacancies;
+            renderVacancies();
+            updateStats();
+          }
+        }
+      } catch (e) {
+        console.error("Initial fetch error:", e);
+      }
+    }
+
+    function toggleFilters() {
+      const filters = document.getElementById("advancedFilters");
+      const chevron = document.getElementById("filterChevron");
+      filters.classList.toggle("hidden");
+      chevron.classList.toggle("rotate-180");
+    }
+
+    function setPreset(val) {
+      document.getElementById("searchQuery").value = val;
+      handleSearch(new Event("submit"));
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
+      document.getElementById(tabId).classList.remove("hidden");
+
+      // Update tab buttons style
+      ['resultsTab', 'analyticsTab', 'settingsTab'].forEach(t => {
+        const btn = document.getElementById(`tabBtn-${t}`);
+        if (t === tabId) {
+          btn.className = "px-4 py-2 text-xs font-semibold rounded-lg bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 transition flex items-center gap-2";
+        } else {
+          btn.className = "px-4 py-2 text-xs font-medium rounded-lg text-zinc-400 hover:text-white hover:bg-white/[0.04] transition flex items-center gap-2";
+        }
+      });
+
+      if (tabId === "analyticsTab") {
+        renderCharts();
+      }
+      lucide.createIcons();
+    }
+
+    async function handleSearch(e) {
+      e.preventDefault();
+      const query = document.getElementById("searchQuery").value.trim();
+      if (!query) return;
+
+      const area = document.getElementById("filterArea").value;
+      const experience = document.getElementById("filterExperience").value;
+      const schedule = document.getElementById("filterSchedule").value;
+      const pages = parseInt(document.getElementById("filterPages").value, 10);
+      const fetchDetails = document.getElementById("fetchDetails").checked;
+
+      // UI loading state
+      const searchBtn = document.getElementById("searchBtn");
+      const searchBtnText = document.getElementById("searchBtnText");
+      const progressContainer = document.getElementById("progressContainer");
+      const progressBar = document.getElementById("progressBar");
+      const progressMessage = document.getElementById("progressMessage");
+      const progressPercent = document.getElementById("progressPercent");
+
+      searchBtn.disabled = true;
+      searchBtnText.innerText = "Yig'ilmoqda...";
+      progressContainer.classList.remove("hidden");
+      progressBar.style.width = "25%";
+      progressPercent.innerText = "25%";
+      progressMessage.innerText = `'${query}' bo'yicha sahifalar tahlil qilinmoqda...`;
+
+      try {
+        const payload = {
+          query: query,
+          area: area,
+          experience: experience,
+          schedule: schedule,
+          pages: pages,
+          fetch_details: fetchDetails
+        };
+
+        const response = await fetch("/api/search", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          const err = await response.json();
+          alert("Xatolik: " + (err.detail || "Qidiruvda xatolik yuz berdi"));
+          return;
+        }
+
+        const data = await response.json();
+        currentVacancies = data.vacancies || [];
+
+        progressBar.style.width = "100%";
+        progressPercent.innerText = "100%";
+        progressMessage.innerText = `Tayyor! ${currentVacancies.length} ta vakansiya topildi.`;
+
+        setTimeout(() => {
+          progressContainer.classList.add("hidden");
+        }, 1500);
+
+        renderVacancies();
+        updateStats();
+
+      } catch (err) {
+        alert("Server bilan ulanishda xatolik yuz berdi: " + err.message);
+      } finally {
+        searchBtn.disabled = false;
+        searchBtnText.innerText = "Vakansiyalarni yig'ish";
+        lucide.createIcons();
+      }
+    }
+
+    function renderVacancies() {
+      const tbody = document.getElementById("vacanciesTbody");
+      const filterText = document.getElementById("tableFilter").value.toLowerCase();
+      const sortBy = document.getElementById("sortSelect").value;
+
+      document.getElementById("badgeCount").innerText = currentVacancies.length;
+
+      let filtered = currentVacancies.filter(v => {
+        const title = (v.title || "").toLowerCase();
+        const comp = (v.company || "").toLowerCase();
+        const addr = (v.address || "").toLowerCase();
+        return title.includes(filterText) || comp.includes(filterText) || addr.includes(filterText);
+      });
+
+      if (sortBy === "salary_high") {
+        filtered.sort((a, b) => (b.salary_max || b.salary_min || 0) - (a.salary_max || a.salary_min || 0));
+      } else if (sortBy === "salary_low") {
+        filtered.sort((a, b) => (a.salary_min || 999999999) - (b.salary_min || 999999999));
+      } else if (sortBy === "title_asc") {
+        filtered.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
+      }
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="py-8 text-center text-zinc-500">
+              Hech qanday vakansiya topilmadi.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map((v, i) => {
+        const isRemote = (v.tags && v.tags.some(t => t.toLowerCase().includes("удал") || t.toLowerCase().includes("remote"))) || (v.address && v.address.toLowerCase().includes("удал"));
+        return `
+          <tr class="hover:bg-white/[0.02] transition">
+            <td class="py-3.5 px-4">
+              <div class="font-semibold text-white tracking-tight">${escapeHtml(v.title)}</div>
+              <div class="flex items-center gap-1.5 mt-1 flex-wrap">
+                ${isRemote ? `<span class="px-2 py-0.5 rounded text-[10px] font-medium bg-sky-500/10 text-sky-400 border border-sky-500/20">Remote / Masofaviy</span>` : ''}
+                ${(v.tags || []).slice(0, 2).map(t => `<span class="px-1.5 py-0.5 rounded text-[10px] bg-white/[0.04] text-zinc-400">${escapeHtml(t)}</span>`).join('')}
+              </div>
+            </td>
+            <td class="py-3.5 px-4 font-medium text-zinc-300">
+              ${escapeHtml(v.company)}
+            </td>
+            <td class="py-3.5 px-4">
+              <span class="font-medium ${v.salary !== "Ko'rsatilmagan" ? 'text-emerald-400 font-semibold' : 'text-zinc-500'}">
+                ${escapeHtml(v.salary)}
+              </span>
+            </td>
+            <td class="py-3.5 px-4 text-zinc-400">
+              ${escapeHtml(v.experience)}
+            </td>
+            <td class="py-3.5 px-4 text-zinc-400">
+              ${escapeHtml(v.address)}
+            </td>
+            <td class="py-3.5 px-4 text-right">
+              <button 
+                onclick="openModal(${i})"
+                class="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-indigo-300 hover:text-white transition font-medium"
+              >
+                Batafsil
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    async function updateStats() {
+      try {
+        const res = await fetch("/api/stats");
+        if (!res.ok) return;
+        const stats = await res.json();
+
+        document.getElementById("statTotal").innerText = stats.total;
+        document.getElementById("statSalaryCount").innerText = stats.with_salary;
+        document.getElementById("statRemoteCount").innerText = stats.remote_count;
+        document.getElementById("statRemotePercent").innerText = stats.remote_percent + "% barcha vakansiyalardan";
+
+        if (stats.avg_salary_usd > 0) {
+          document.getElementById("statAvgSalary").innerText = "$" + stats.avg_salary_usd.toLocaleString();
+        } else if (stats.avg_salary_uzs > 0) {
+          document.getElementById("statAvgSalary").innerText = (stats.avg_salary_uzs / 1000000).toFixed(1) + " mln so'm";
+        } else {
+          document.getElementById("statAvgSalary").innerText = "-";
+        }
+      } catch (e) {
+        console.error("Stats error:", e);
+      }
+    }
+
+    async function renderCharts() {
+      try {
+        const res = await fetch("/api/stats");
+        if (!res.ok) return;
+        const stats = await res.json();
+
+        // 1. Experience Chart
+        const expLabels = Object.keys(stats.experience_distribution || {});
+        const expData = Object.values(stats.experience_distribution || {});
+
+        const ctx1 = document.getElementById("experienceChart").getContext("2d");
+        if (expChart) expChart.destroy();
+        expChart = new Chart(ctx1, {
+          type: 'doughnut',
+          data: {
+            labels: expLabels.length ? expLabels : ['Ma\'lumot yo\'q'],
+            datasets: [{
+              data: expData.length ? expData : [1],
+              backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'],
+              borderColor: '#18181b',
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: { color: '#a1a1aa', boxWidth: 12, font: { size: 11 } }
+              }
+            }
+          }
+        });
+
+        // 2. Companies Chart
+        const compLabels = (stats.top_companies || []).map(c => c.name.length > 20 ? c.name.slice(0, 18) + '...' : c.name);
+        const compData = (stats.top_companies || []).map(c => c.count);
+
+        const ctx2 = document.getElementById("companiesChart").getContext("2d");
+        if (compChart) compChart.destroy();
+        compChart = new Chart(ctx2, {
+          type: 'bar',
+          data: {
+            labels: compLabels.length ? compLabels : ['Ma\'lumot yo\'q'],
+            datasets: [{
+              label: 'Vakansiyalar soni',
+              data: compData.length ? compData : [0],
+              backgroundColor: '#6366f1',
+              borderRadius: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: { ticks: { color: '#a1a1aa', stepSize: 1 }, grid: { color: 'rgba(255,255,255,0.05)' } },
+              x: { ticks: { color: '#a1a1aa', font: { size: 10 } }, grid: { display: false } }
+            },
+            plugins: {
+              legend: { display: false }
+            }
+          }
+        });
+
+      } catch (e) {
+        console.error("Render charts error:", e);
+      }
+    }
+
+    function openModal(index) {
+      const v = currentVacancies[index];
+      if (!v) return;
+
+      document.getElementById("modalCompany").innerText = v.company || "Noma'lum kompaniya";
+      document.getElementById("modalTitle").innerText = v.title || "Vakansiya";
+      document.getElementById("modalSalary").innerText = v.salary || "Ko'rsatilmagan";
+      document.getElementById("modalExperience").innerText = v.experience || "Tajriba ko'rsatilmagan";
+      document.getElementById("modalAddress").innerText = v.address || "Toshkent";
+      document.getElementById("modalDescription").innerText = v.description || "Vakansiya tavsifi yuklanmagan (Tezkor rejim). Batafsil ma'lumotni to'g'ridan-to'g'ri hh.uz havolasidan ko'rishingiz mumkin.";
+      document.getElementById("modalEmail").innerText = v.email || "N/A";
+      document.getElementById("modalPhone").innerText = v.phone || "N/A";
+      document.getElementById("modalLink").href = v.link || "#";
+
+      const skillsEl = document.getElementById("modalSkills");
+      if (v.skills && v.skills.length > 0) {
+        skillsEl.innerHTML = v.skills.map(s => `
+          <span class="px-2.5 py-1 rounded-md bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 font-medium">${escapeHtml(s)}</span>
+        `).join('');
+      } else {
+        skillsEl.innerHTML = `<span class="text-zinc-500 italic">Vakansiya sahifasida alohida ko'nikmalar ko'rsatilmagan.</span>`;
+      }
+
+      document.getElementById("detailModal").classList.remove("hidden");
+      lucide.createIcons();
+    }
+
+    function closeModal() {
+      document.getElementById("detailModal").classList.add("hidden");
+    }
+
+    async function handleAuth(e) {
+      e.preventDefault();
+      const email = document.getElementById("authEmail").value.trim();
+      const cookies = document.getElementById("authCookies").value.trim();
+
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email, session_cookies: cookies })
+      });
+
+      const data = await res.json();
+      document.getElementById("authStatusText").innerText = "Holat: " + data.message;
+      alert(data.message);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+  </script>
+</body>
+</html>

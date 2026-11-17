@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  hh-parser:
+    build: .
+    container_name: hh_parser_app
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
